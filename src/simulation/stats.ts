@@ -18,7 +18,7 @@ export function computeStatsFromDistribution(distribution: number[]): Simulation
   let cumulative = 0
   let median = 1
   for (let i = 0; i < n; i++) {
-    cumulative += distribution[i]
+    cumulative += distribution[i] ?? 0
     if (cumulative >= 0.5) {
       median = i + 1
       break
@@ -29,7 +29,7 @@ export function computeStatsFromDistribution(distribution: number[]): Simulation
   cumulative = 0
   let p90 = 1
   for (let i = 0; i < n; i++) {
-    cumulative += distribution[i]
+    cumulative += distribution[i] ?? 0
     if (cumulative >= 0.9) {
       p90 = i + 1
       break
@@ -40,7 +40,7 @@ export function computeStatsFromDistribution(distribution: number[]): Simulation
   const maxDrought = n
 
   // First attempt percentage
-  const firstAttemptPercent = distribution[0] * 100
+  const firstAttemptPercent = (distribution[0] ?? 0) * 100
 
   return {
     average: Math.round(average * 100) / 100,

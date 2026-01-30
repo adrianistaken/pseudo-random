@@ -55,7 +55,7 @@ const chartOptions = computed<ChartOptions<'bar'>>(() => ({
     tooltip: {
       callbacks: {
         title: (ctx) => {
-          const attemptNumber = ctx[0].dataIndex + 1
+          const attemptNumber = (ctx[0]?.dataIndex ?? 0) + 1
           return `Attempt ${attemptNumber}`
         },
         label: (ctx) => {
