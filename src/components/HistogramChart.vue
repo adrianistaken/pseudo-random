@@ -24,14 +24,15 @@ function toPercent(histogram: number[], buckets: number): number[] {
 const chartData = computed<ChartData<'bar'>>(() => ({
   labels: labels.value,
   datasets: [
-    {
-      label: 'True RNG',
-      data: toPercent(props.trueRngHistogram, props.displayBuckets),
-      backgroundColor: CHART_COLORS.trueRng,
-      borderColor: CHART_COLORS.trueRngBorder,
-      borderWidth: 1,
-      borderRadius: 2,
-    },
+    // Commenting out True RNG for now - focusing on PRD only
+    // {
+    //   label: 'True RNG',
+    //   data: toPercent(props.trueRngHistogram, props.displayBuckets),
+    //   backgroundColor: CHART_COLORS.trueRng,
+    //   borderColor: CHART_COLORS.trueRngBorder,
+    //   borderWidth: 1,
+    //   borderRadius: 2,
+    // },
     {
       label: 'PRD',
       data: toPercent(props.prdHistogram, props.displayBuckets),
@@ -49,8 +50,7 @@ const chartOptions = computed<ChartOptions<'bar'>>(() => ({
   animation: ANIMATION_CONFIG,
   plugins: {
     legend: {
-      display: true,
-      labels: { color: '#f0f0f5', padding: 20, font: { size: 12 } },
+      display: false, // Hide legend since we're only showing PRD now
     },
     tooltip: {
       callbacks: {
@@ -60,7 +60,18 @@ const chartOptions = computed<ChartOptions<'bar'>>(() => ({
         },
         label: (ctx) => {
           const prob = (ctx.raw as number).toFixed(2)
-          return `${ctx.dataset.label} proc chance: ${prob}%`
+          return `Proc chance: ${prob}%`
+        },
+        afterLabel: (ctx) => {
+          const attemptNumber = ctx.dataIndex + 1
+          const lines: string[] = []
+
+          // Show how the C value scales
+          const rawC = attemptNumber * props.prdConstant
+          const cappedC = Math.min(rawC, 1) * 100
+          lines.push(`Formula: ${attemptNumber} × ${(props.prdConstant * 100).toFixed(2)}% = ${cappedC.toFixed(2)}%`)
+
+          return lines
         },
       },
     },
@@ -74,13 +85,21 @@ const chartOptions = computed<ChartOptions<'bar'>>(() => ({
       title: { display: true, text: 'Proc Chance (%)', color: '#6b7280' },
       grid: { color: 'rgba(31, 41, 55, 0.6)' },
       beginAtZero: true,
+      max: 100, // Cap at 100% to show the full range
     },
   },
 }))
 </script>
 
 <template>
-  <div class="w-full h-80">
+  <div class="chart-wrapper">
     <Bar :data="chartData" :options="chartOptions" />
   </div>
 </template>
+
+<style scoped>
+.chart-wrapper {
+  width: 100%;
+  height: 320px;
+}
+</style>

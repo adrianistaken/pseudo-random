@@ -27,7 +27,7 @@ function getPrdConstant(): number {
         <div class="title-group">
           <h1 class="main-title">Pseudo-Random Distribution</h1>
           <p class="subtitle">
-            Proc chance per attempt for Dota 2 mechanics
+            How proc chance increases with each failed attempt
           </p>
         </div>
       </header>
@@ -48,6 +48,14 @@ function getPrdConstant(): number {
         />
       </section>
 
+      <!-- Explanation (hidden for now) -->
+      <!-- <section v-if="result" class="explanation-section">
+        <p class="explanation-text">
+          In Dota 2's PRD system, each failed attempt increases your proc chance by <strong>C = {{ (getPrdConstant() * 100).toFixed(1) }}%</strong>.
+          This creates a more consistent experience compared to pure random chance.
+        </p>
+      </section> -->
+
       <!-- Controls -->
       <section class="controls-section">
         <!-- Custom Input -->
@@ -64,7 +72,7 @@ function getPrdConstant(): number {
             <span class="input-suffix">%</span>
           </div>
           <div class="c-value">
-            <span class="c-label">C</span>
+            <span class="c-label">C =</span>
             <span class="c-number">{{ (getPrdConstant() * 100).toFixed(1) }}%</span>
           </div>
         </div>
@@ -163,6 +171,26 @@ function getPrdConstant(): number {
     0 0 40px rgba(34, 211, 238, 0.1);
 }
 
+/* Explanation Section */
+.explanation-section {
+  text-align: center;
+  animation: fadeIn 0.8s ease-out 0.3s both;
+}
+
+.explanation-text {
+  font-size: 0.95rem;
+  color: #cbd5e1;
+  line-height: 1.6;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.explanation-text strong {
+  color: #22d3ee;
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 600;
+}
+
 /* Controls Section */
 .controls-section {
   display: flex;
@@ -206,7 +234,7 @@ function getPrdConstant(): number {
   font-size: 1.25rem;
   font-weight: 500;
   text-align: center;
-  padding: 0 2.5rem 0 1rem;
+  padding: 0 1rem 0 1rem;
   outline: none;
   transition: all 0.25s ease;
 }
@@ -234,21 +262,23 @@ function getPrdConstant(): number {
 }
 
 .c-value {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.75rem 1.25rem;
+  gap: 0.625rem;
+  padding: 0.75rem 1.75rem;
   background: rgba(17, 24, 39, 0.6);
   border: 1px solid #1e293b;
   border-radius: 10px;
   backdrop-filter: blur(10px);
+  justify-content: center;
 }
 
 .c-label {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 0.85rem;
-  color: #64748b;
+  font-size: 0.9rem;
+  color: #94a3b8;
   font-weight: 500;
+  white-space: nowrap;
 }
 
 .c-number {
@@ -256,6 +286,7 @@ function getPrdConstant(): number {
   font-size: 1.1rem;
   color: #22d3ee;
   font-weight: 600;
+  white-space: nowrap;
 }
 
 /* Presets Group */
