@@ -100,6 +100,7 @@ function getPrdConstant(): number {
           <div class="c-value">
             <span class="c-label">C =</span>
             <span class="c-number">{{ animatedC.toFixed(1) }}%</span>
+            <span class="c-info" data-tooltip="C is the step size — your proc chance increases by this amount on each failed attempt, resetting after a proc.">?</span>
           </div>
         </div>
 
@@ -271,6 +272,7 @@ function getPrdConstant(): number {
 }
 
 .c-value {
+  position: relative;
   display: inline-flex;
   align-items: center;
   gap: 0.625rem;
@@ -295,6 +297,59 @@ function getPrdConstant(): number {
   color: #7fb069;
   font-weight: 600;
   white-space: nowrap;
+}
+
+.c-info {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  font-size: 10px;
+  font-weight: 700;
+  font-family: Arial, sans-serif;
+  line-height: 1;
+  color: #64748b;
+  background: rgb(18 18 18);
+  border: 1px solid #4f4f4f;
+  border-radius: 50%;
+  cursor: help;
+  transition: all 0.2s ease;
+}
+
+.c-info:hover {
+  color: #94a3b8;
+  border-color: #94a3b8;
+}
+
+.c-info::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: calc(100% + 8px);
+  right: 0;
+  width: 240px;
+  padding: 0.6rem 0.75rem;
+  background: rgb(30 30 30);
+  border: 1px solid #4f4f4f;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 400;
+  font-family: inherit;
+  color: #cbd5e1;
+  line-height: 1.5;
+  white-space: normal;
+  text-align: left;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+}
+
+.c-info:hover::after {
+  opacity: 1;
 }
 
 /* Presets Group */
