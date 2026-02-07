@@ -22,7 +22,7 @@ export type ProgressCallback = (progress: number) => void
 
 export interface Preset {
   label: string
-  procChance: number
+  levels: number[]       // proc chance at each level, e.g. [25] or [10, 15, 20, 25]
   description: string
   image?: string
   category?: 'item' | 'spell'

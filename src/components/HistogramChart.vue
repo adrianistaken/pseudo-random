@@ -14,6 +14,8 @@ const props = defineProps<{
   procChance: number // Base proc chance
 }>()
 
+const cycleLength = computed(() => Math.ceil(1 / props.prdConstant))
+
 const labels = computed(() => generateLabels(props.displayBuckets, MAX_BUCKET))
 
 // Convert probability (0-1) to percentage (0-100)
@@ -24,15 +26,6 @@ function toPercent(histogram: number[], buckets: number): number[] {
 const chartData = computed<ChartData<'bar'>>(() => ({
   labels: labels.value,
   datasets: [
-    // Commenting out True RNG for now - focusing on PRD only
-    // {
-    //   label: 'True RNG',
-    //   data: toPercent(props.trueRngHistogram, props.displayBuckets),
-    //   backgroundColor: CHART_COLORS.trueRng,
-    //   borderColor: CHART_COLORS.trueRngBorder,
-    //   borderWidth: 1,
-    //   borderRadius: 2,
-    // },
     {
       label: 'PRD',
       data: toPercent(props.prdHistogram, props.displayBuckets),
@@ -48,9 +41,13 @@ const chartOptions = computed<ChartOptions<'bar'>>(() => ({
   responsive: true,
   maintainAspectRatio: false,
   animation: ANIMATION_CONFIG,
+  interaction: {
+    mode: 'index',
+    intersect: false,
+  },
   plugins: {
     legend: {
-      display: false, // Hide legend since we're only showing PRD now
+      display: false,
     },
     tooltip: {
       callbacks: {
@@ -64,12 +61,12 @@ const chartOptions = computed<ChartOptions<'bar'>>(() => ({
         },
         afterLabel: (ctx) => {
           const attemptNumber = ctx.dataIndex + 1
+          const cyclePos = ((attemptNumber - 1) % cycleLength.value) + 1
           const lines: string[] = []
 
-          // Show how the C value scales
-          const rawC = attemptNumber * props.prdConstant
+          const rawC = cyclePos * props.prdConstant
           const cappedC = Math.min(rawC, 1) * 100
-          lines.push(`Formula: ${attemptNumber} × ${(props.prdConstant * 100).toFixed(2)}% = ${cappedC.toFixed(2)}%`)
+          lines.push(`Formula: ${cyclePos} × ${(props.prdConstant * 100).toFixed(2)}% = ${cappedC.toFixed(2)}%`)
 
           return lines
         },
@@ -85,7 +82,7 @@ const chartOptions = computed<ChartOptions<'bar'>>(() => ({
       title: { display: true, text: 'Proc Chance (%)', color: '#6b7280' },
       grid: { color: 'rgba(31, 41, 55, 0.6)' },
       beginAtZero: true,
-      max: 100, // Cap at 100% to show the full range
+      suggestedMax: 100,
     },
   },
 }))
@@ -100,6 +97,6 @@ const chartOptions = computed<ChartOptions<'bar'>>(() => ({
 <style scoped>
 .chart-wrapper {
   width: 100%;
-  height: 320px;
+  height: 280px;
 }
 </style>

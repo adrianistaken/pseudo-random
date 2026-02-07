@@ -1,15 +1,17 @@
 <script setup lang="ts">
+import { computed } from 'vue'
 import '@/chartConfig'
 import { useSimulation } from '@/composables/useSimulation'
 import PresetButtons from '@/components/PresetButtons.vue'
 import HistogramChart from '@/components/HistogramChart.vue'
-import type { Preset } from '@/simulation/types'
 import { calculateC } from '@/simulation/prd'
 
-const { procChance, result, error, applyPreset } = useSimulation()
+const { procChance, result, applyPreset } = useSimulation()
 
-function handlePreset(preset: Preset) {
-  applyPreset(preset)
+const isInvalid = computed(() => procChance.value < 1 || procChance.value > 99)
+
+function handlePreset(value: number) {
+  applyPreset(value)
 }
 
 function getPrdConstant(): number {
@@ -32,11 +34,6 @@ function getPrdConstant(): number {
         </div>
       </header>
 
-      <!-- Error -->
-      <div v-if="error" class="error-message">
-        {{ error }}
-      </div>
-
       <!-- Graph Container -->
       <section v-if="result" class="chart-container">
         <HistogramChart
@@ -48,20 +45,12 @@ function getPrdConstant(): number {
         />
       </section>
 
-      <!-- Explanation (hidden for now) -->
-      <!-- <section v-if="result" class="explanation-section">
-        <p class="explanation-text">
-          In Dota 2's PRD system, each failed attempt increases your proc chance by <strong>C = {{ (getPrdConstant() * 100).toFixed(1) }}%</strong>.
-          This creates a more consistent experience compared to pure random chance.
-        </p>
-      </section> -->
-
       <!-- Controls -->
       <section class="controls-section">
         <!-- Custom Input -->
         <div class="input-group">
           <label class="input-label">Proc Chance</label>
-          <div class="input-wrapper">
+          <div class="input-wrapper" :class="{ invalid: isInvalid }">
             <input
               type="number"
               v-model.number="procChance"
@@ -118,14 +107,17 @@ function getPrdConstant(): number {
   font-size: 3rem;
   font-weight: 500;
   letter-spacing: -0.02em;
-  color: #f8fafc;
   margin: 0;
   padding: 0;
   line-height: 1.1;
-  background: linear-gradient(135deg, #f8fafc 0%, #22d3ee 100%);
+  background:
+    linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.4) 50%, transparent 100%),
+    linear-gradient(135deg, #f8fafc 0%, #7fb069 50%, #a8d98a 100%);
+  background-size: 200% 100%, 100% 100%;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+  animation: shimmer 6s ease-in-out infinite;
 }
 
 .subtitle {
@@ -136,58 +128,32 @@ function getPrdConstant(): number {
   letter-spacing: 0.02em;
 }
 
-/* Error Message */
-.error-message {
-  text-align: center;
-  color: #ef4444;
-  font-size: 0.9rem;
-  padding: 1rem;
-  background: rgba(239, 68, 68, 0.1);
-  border: 1px solid rgba(239, 68, 68, 0.3);
-  border-radius: 8px;
-  animation: fadeIn 0.4s ease-out;
+/* Invalid input indicator */
+.input-wrapper.invalid .proc-input {
+  border-color: rgba(239, 68, 68, 0.5);
+  box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.12);
 }
 
 /* Chart Container */
 .chart-container {
-  background: rgba(17, 24, 39, 0.6);
+  background: rgb(18 18 18);
   backdrop-filter: blur(20px);
-  border: 1px solid rgba(30, 41, 59, 0.8);
-  border-radius: 16px;
-  padding: 2.5rem;
+  border: 1px solid #4f4f4f3b;
+  border-radius: 10px;
+  padding: 1.25rem 1.5rem;
   box-shadow:
     0 4px 24px rgba(0, 0, 0, 0.4),
-    0 0 0 1px rgba(34, 211, 238, 0.1);
+    0 0 0 1px rgba(127, 176, 105, 0.1);
   animation: fadeIn 0.8s ease-out 0.2s both;
   transition: all 0.3s ease;
 }
 
 .chart-container:hover {
-  border-color: rgba(34, 211, 238, 0.3);
+  border-color: rgba(127, 176, 105, 0.3);
   box-shadow:
     0 8px 32px rgba(0, 0, 0, 0.5),
-    0 0 0 1px rgba(34, 211, 238, 0.2),
-    0 0 40px rgba(34, 211, 238, 0.1);
-}
-
-/* Explanation Section */
-.explanation-section {
-  text-align: center;
-  animation: fadeIn 0.8s ease-out 0.3s both;
-}
-
-.explanation-text {
-  font-size: 0.95rem;
-  color: #cbd5e1;
-  line-height: 1.6;
-  max-width: 600px;
-  margin: 0 auto;
-}
-
-.explanation-text strong {
-  color: #22d3ee;
-  font-family: 'JetBrains Mono', monospace;
-  font-weight: 600;
+    0 0 0 1px rgba(127, 176, 105, 0.2),
+    0 0 40px rgba(127, 176, 105, 0.08);
 }
 
 /* Controls Section */
@@ -224,31 +190,38 @@ function getPrdConstant(): number {
 .proc-input {
   width: 90px;
   height: 48px;
-  background: rgba(17, 24, 39, 0.8);
-  backdrop-filter: blur(10px);
-  border: 1px solid #1e293b;
-  border-radius: 10px;
+  background: rgb(18 18 18);
+  border: 1px solid #4f4f4f3b;
+  border-radius: 6px;
   color: #f8fafc;
   font-family: 'JetBrains Mono', monospace;
   font-size: 1.25rem;
   font-weight: 500;
   text-align: center;
-  padding: 0 1rem 0 1rem;
+  padding: 0 1.75rem 0 0.25rem;
   outline: none;
   transition: all 0.25s ease;
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+.proc-input::-webkit-outer-spin-button,
+.proc-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }
 
 .proc-input:hover {
-  border-color: rgba(34, 211, 238, 0.3);
-  background: rgba(17, 24, 39, 0.95);
+  border-color: rgba(127, 176, 105, 0.3);
+  background: rgb(22 22 22);
 }
 
 .proc-input:focus {
-  border-color: #22d3ee;
+  border-color: #7fb069;
   box-shadow:
-    0 0 0 3px rgba(34, 211, 238, 0.15),
-    0 4px 12px rgba(34, 211, 238, 0.2);
-  background: rgba(17, 24, 39, 1);
+    0 0 0 3px rgba(127, 176, 105, 0.15),
+    0 4px 12px rgba(127, 176, 105, 0.2);
+  background: rgb(22 22 22);
 }
 
 .input-suffix {
@@ -265,10 +238,9 @@ function getPrdConstant(): number {
   align-items: center;
   gap: 0.625rem;
   padding: 0.75rem 1.75rem;
-  background: rgba(17, 24, 39, 0.6);
-  border: 1px solid #1e293b;
-  border-radius: 10px;
-  backdrop-filter: blur(10px);
+  background: rgb(18 18 18);
+  border: 1px solid #4f4f4f3b;
+  border-radius: 6px;
   justify-content: center;
 }
 
@@ -283,7 +255,7 @@ function getPrdConstant(): number {
 .c-number {
   font-family: 'JetBrains Mono', monospace;
   font-size: 1.1rem;
-  color: #22d3ee;
+  color: #7fb069;
   font-weight: 600;
   white-space: nowrap;
 }
@@ -306,7 +278,7 @@ function getPrdConstant(): number {
   }
 
   .chart-container {
-    padding: 1.5rem;
+    padding: 1rem;
   }
 
   .input-group {
@@ -330,7 +302,7 @@ function getPrdConstant(): number {
   }
 
   .chart-container {
-    padding: 1rem;
+    padding: 0.75rem;
   }
 }
 </style>

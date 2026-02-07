@@ -16,8 +16,8 @@ ChartJS.defaults.borderColor = '#1f2937'
 export const CHART_COLORS = {
   trueRng: 'rgba(239, 68, 68, 0.75)',
   trueRngBorder: 'rgba(239, 68, 68, 1)',
-  prd: 'rgba(34, 211, 238, 0.75)',
-  prdBorder: 'rgba(34, 211, 238, 1)',
+  prd: 'rgba(127, 176, 105, 0.75)',
+  prdBorder: 'rgba(127, 176, 105, 1)',
 }
 
 export const ANIMATION_CONFIG = {
