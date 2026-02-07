@@ -174,6 +174,11 @@ function getPrdConstant(): number {
           <div class="learn-formula">
             P(N) = C &times; N
           </div>
+          <div class="learn-formula-legend">
+            <span><strong>P(N)</strong> = proc chance on attempt N</span>
+            <span><strong>C</strong> = step size (the PRD constant)</span>
+            <span><strong>N</strong> = attempts since last proc</span>
+          </div>
           <p class="learn-text">
             That's it. Your proc chance on attempt N is just the C value multiplied by the attempt number (capped at 100%). So if C is 8.5%:
           </p>
@@ -423,6 +428,20 @@ function getPrdConstant(): number {
   border: 1px solid rgba(127, 176, 105, 0.15);
   border-radius: 8px;
   letter-spacing: 0.03em;
+}
+
+.learn-formula-legend {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  margin: -0.25rem 0 1rem 0;
+  font-size: 0.8rem;
+  color: #64748b;
+}
+
+.learn-formula-legend strong {
+  color: #7fb069;
+  font-weight: 600;
 }
 
 .learn-formula-table {
