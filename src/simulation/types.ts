@@ -24,4 +24,6 @@ export interface Preset {
   label: string
   procChance: number
   description: string
+  image?: string
+  category?: 'item' | 'spell'
 }

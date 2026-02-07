@@ -79,7 +79,6 @@ function getPrdConstant(): number {
 
         <!-- Presets -->
         <div class="presets-group">
-          <span class="presets-label">Quick Select</span>
           <PresetButtons @select="handlePreset" />
         </div>
       </section>
@@ -117,7 +116,7 @@ function getPrdConstant(): number {
 
 .main-title {
   font-size: 3rem;
-  font-weight: 300;
+  font-weight: 500;
   letter-spacing: -0.02em;
   color: #f8fafc;
   margin: 0;
@@ -133,7 +132,7 @@ function getPrdConstant(): number {
   margin-top: 0.75rem;
   font-size: 0.95rem;
   color: #94a3b8;
-  font-weight: 400;
+  font-weight: 500;
   letter-spacing: 0.02em;
 }
 
@@ -293,16 +292,7 @@ function getPrdConstant(): number {
 .presets-group {
   display: flex;
   flex-direction: column;
-  align-items: center;
   gap: 1rem;
-}
-
-.presets-label {
-  font-size: 0.8rem;
-  font-weight: 500;
-  color: #64748b;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
 }
 
 /* Responsive */
