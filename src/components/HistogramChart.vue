@@ -64,9 +64,11 @@ const chartOptions = computed<ChartOptions<'bar'>>(() => ({
           const cyclePos = ((attemptNumber - 1) % cycleLength.value) + 1
           const lines: string[] = []
 
-          const rawC = cyclePos * props.prdConstant
-          const cappedC = Math.min(rawC, 1) * 100
-          lines.push(`Formula: ${cyclePos} × ${(props.prdConstant * 100).toFixed(2)}% = ${cappedC.toFixed(2)}%`)
+          const cPercent = (props.prdConstant * 100).toFixed(2)
+          const rawResult = cyclePos * props.prdConstant
+          const cappedResult = Math.min(rawResult, 1) * 100
+
+          lines.push(`P(${cyclePos}) = ${cPercent}% × ${cyclePos} = ${cappedResult.toFixed(2)}%`)
 
           return lines
         },

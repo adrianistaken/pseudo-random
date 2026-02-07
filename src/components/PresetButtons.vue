@@ -13,21 +13,38 @@ const spells = computed(() => PRESETS.filter(p => p.category === 'spell'))
 // Track selected level per preset (defaults to max level)
 const selectedLevels = reactive<Record<string, number>>({})
 
+// Track talent toggle per preset
+const talentActive = reactive<Record<string, boolean>>({})
+
 function getLevel(preset: Preset): number {
   return selectedLevels[preset.label] ?? preset.levels.length - 1
 }
 
-function getProcChance(preset: Preset, levelIndex: number): number {
-  return preset.levels[levelIndex] ?? preset.levels[preset.levels.length - 1] ?? 0
+function isTalentOn(preset: Preset): boolean {
+  if (!preset.talent) return false
+  if (preset.talent.locked) return true
+  return !!talentActive[preset.label]
+}
+
+function getEffectiveChance(preset: Preset, levelIndex: number): number {
+  const base = preset.levels[levelIndex] ?? preset.levels[preset.levels.length - 1] ?? 0
+  const bonus = isTalentOn(preset) ? preset.talent!.bonus : 0
+  return base + bonus
 }
 
 function selectLevel(preset: Preset, levelIndex: number) {
   selectedLevels[preset.label] = levelIndex
-  emit('select', getProcChance(preset, levelIndex))
+  emit('select', getEffectiveChance(preset, levelIndex))
 }
 
 function selectPreset(preset: Preset) {
-  emit('select', getProcChance(preset, getLevel(preset)))
+  emit('select', getEffectiveChance(preset, getLevel(preset)))
+}
+
+function toggleTalent(preset: Preset) {
+  if (preset.talent?.locked) return
+  talentActive[preset.label] = !talentActive[preset.label]
+  emit('select', getEffectiveChance(preset, getLevel(preset)))
 }
 </script>
 
@@ -43,26 +60,36 @@ function selectPreset(preset: Preset) {
           @click="selectPreset(preset)"
           class="preset-card"
         >
-          <img
-            v-if="preset.image"
-            :src="preset.image"
-            :alt="preset.label"
-            class="preset-icon"
-          />
-          <div class="preset-info">
-            <span class="preset-label">{{ preset.label }}</span>
-            <div class="preset-bottom">
-              <span class="preset-value">{{ preset.levels[getLevel(preset)] }}%</span>
-              <div v-if="preset.levels.length > 1" class="level-pips">
-                <span
-                  v-for="(_, i) in preset.levels"
-                  :key="i"
-                  class="level-pip"
-                  :class="{ active: i <= getLevel(preset) }"
-                  @click.stop="selectLevel(preset, i)"
+          <div class="card-top">
+            <img
+              v-if="preset.image"
+              :src="preset.image"
+              :alt="preset.label"
+              class="preset-icon"
+            />
+            <div class="preset-info">
+              <span class="preset-label">{{ preset.label }}</span>
+              <div class="preset-value-row">
+                <span class="preset-value">{{ getEffectiveChance(preset, getLevel(preset)) }}%</span>
+                <img
+                  v-if="preset.talent"
+                  :src="preset.talent.icon"
+                  :alt="`+${preset.talent.bonus}% talent`"
+                  class="talent-icon"
+                  :class="{ active: isTalentOn(preset), locked: preset.talent.locked }"
+                  @click.stop="toggleTalent(preset)"
                 />
               </div>
             </div>
+          </div>
+          <div v-if="preset.category === 'spell'" class="level-pips">
+            <span
+              v-for="(_, i) in preset.levels"
+              :key="i"
+              class="level-pip"
+              :class="{ active: i <= getLevel(preset) }"
+              @click.stop="selectLevel(preset, i)"
+            />
           </div>
         </button>
       </div>
@@ -78,26 +105,36 @@ function selectPreset(preset: Preset) {
           @click="selectPreset(preset)"
           class="preset-card"
         >
-          <img
-            v-if="preset.image"
-            :src="preset.image"
-            :alt="preset.label"
-            class="preset-icon"
-          />
-          <div class="preset-info">
-            <span class="preset-label">{{ preset.label }}</span>
-            <div class="preset-bottom">
-              <span class="preset-value">{{ preset.levels[getLevel(preset)] }}%</span>
-              <div v-if="preset.levels.length > 1" class="level-pips">
-                <span
-                  v-for="(_, i) in preset.levels"
-                  :key="i"
-                  class="level-pip"
-                  :class="{ active: i <= getLevel(preset) }"
-                  @click.stop="selectLevel(preset, i)"
+          <div class="card-top">
+            <img
+              v-if="preset.image"
+              :src="preset.image"
+              :alt="preset.label"
+              class="preset-icon"
+            />
+            <div class="preset-info">
+              <span class="preset-label">{{ preset.label }}</span>
+              <div class="preset-value-row">
+                <span class="preset-value">{{ getEffectiveChance(preset, getLevel(preset)) }}%</span>
+                <img
+                  v-if="preset.talent"
+                  :src="preset.talent.icon"
+                  :alt="`+${preset.talent.bonus}% talent`"
+                  class="talent-icon"
+                  :class="{ active: isTalentOn(preset), locked: preset.talent.locked }"
+                  @click.stop="toggleTalent(preset)"
                 />
               </div>
             </div>
+          </div>
+          <div v-if="preset.category === 'spell'" class="level-pips">
+            <span
+              v-for="(_, i) in preset.levels"
+              :key="i"
+              class="level-pip"
+              :class="{ active: i <= getLevel(preset) }"
+              @click.stop="selectLevel(preset, i)"
+            />
           </div>
         </button>
       </div>
@@ -137,8 +174,8 @@ function selectPreset(preset: Preset) {
 .preset-card {
   position: relative;
   display: flex;
-  align-items: center;
-  gap: 0.625rem;
+  flex-direction: column;
+  gap: 0.5rem;
   padding: 0.5rem 0.75rem;
   background: rgb(25 25 25);
   backdrop-filter: blur(10px);
@@ -179,9 +216,16 @@ function selectPreset(preset: Preset) {
   transform: translateY(0);
 }
 
-.preset-icon {
+/* Top row: icon + info */
+.card-top {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
   position: relative;
   z-index: 1;
+}
+
+.preset-icon {
   width: 40px;
   height: 40px;
   border-radius: 3px;
@@ -196,8 +240,6 @@ function selectPreset(preset: Preset) {
 }
 
 .preset-info {
-  position: relative;
-  z-index: 1;
   display: flex;
   flex-direction: column;
   gap: 0.15rem;
@@ -219,7 +261,7 @@ function selectPreset(preset: Preset) {
   color: #f8fafc;
 }
 
-.preset-bottom {
+.preset-value-row {
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -227,7 +269,7 @@ function selectPreset(preset: Preset) {
 
 .preset-value {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 0.75rem;
+  font-size: 1rem;
   font-weight: 600;
   color: #7fb069;
   transition: all 0.2s ease;
@@ -237,16 +279,44 @@ function selectPreset(preset: Preset) {
   text-shadow: 0 0 8px rgba(127, 176, 105, 0.4);
 }
 
+/* Talent icon */
+.talent-icon {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  opacity: 0.25;
+  filter: grayscale(1);
+  flex-shrink: 0;
+}
+
+.talent-icon:hover {
+  opacity: 0.6;
+  filter: grayscale(0.5);
+}
+
+.talent-icon.active {
+  opacity: 1;
+  filter: grayscale(0) brightness(1.1) drop-shadow(0 0 4px rgba(200, 168, 78, 0.6));
+}
+
+.talent-icon.locked {
+  cursor: default;
+}
+
 /* Dota-style level pips */
 .level-pips {
   display: flex;
   align-items: center;
   gap: 3px;
-  flex: 1;
+  position: relative;
+  z-index: 1;
+  width: 100%;
 }
 
 .level-pip {
   flex: 1;
+  max-width: 25%;
   height: 8px;
   background: #2a2a2a;
   border: 1px solid #444;
@@ -282,7 +352,7 @@ function selectPreset(preset: Preset) {
 
   .preset-card {
     padding: 0.4rem 0.6rem;
-    gap: 0.5rem;
+    gap: 0.4rem;
   }
 
   .preset-icon {

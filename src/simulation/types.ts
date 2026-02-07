@@ -26,4 +26,9 @@ export interface Preset {
   description: string
   image?: string
   category?: 'item' | 'spell'
+  talent?: {
+    bonus: number        // flat bonus added to proc chance, e.g. 10 means +10%
+    icon: string         // path to talent icon image
+    locked?: boolean     // if true, talent is always active and cannot be toggled off
+  }
 }

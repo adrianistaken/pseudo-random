@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import '@/chartConfig'
 import { useSimulation } from '@/composables/useSimulation'
+import { useAnimatedNumber } from '@/composables/useAnimatedNumber'
 import PresetButtons from '@/components/PresetButtons.vue'
 import HistogramChart from '@/components/HistogramChart.vue'
 import { calculateC } from '@/simulation/prd'
@@ -9,6 +10,38 @@ import { calculateC } from '@/simulation/prd'
 const { procChance, result, applyPreset } = useSimulation()
 
 const isInvalid = computed(() => procChance.value < 1 || procChance.value > 99)
+const inputFocused = ref(false)
+
+const animatedProc = useAnimatedNumber(procChance, 350)
+const cPercent = computed(() => getPrdConstant() * 100)
+const animatedC = useAnimatedNumber(cPercent, 350)
+
+const displayProc = computed(() => {
+  if (inputFocused.value) return procChance.value
+  if (Number.isInteger(procChance.value)) return Math.round(animatedProc.value)
+  return Math.round(animatedProc.value * 100) / 100
+})
+
+function handleInput(e: Event) {
+  const input = e.target as HTMLInputElement
+  const raw = input.value
+  if (raw === '' || raw.endsWith('.')) return
+  let val = parseFloat(raw)
+  if (isNaN(val)) return
+  val = Math.round(val * 100) / 100
+  val = Math.min(99, Math.max(0, val))
+  procChance.value = val
+}
+
+function handleBlur(e: Event) {
+  const input = e.target as HTMLInputElement
+  let val = parseFloat(input.value)
+  if (isNaN(val)) val = 25
+  val = Math.round(val * 100) / 100
+  val = Math.min(99, Math.max(1, val))
+  procChance.value = val
+  input.value = String(val)
+}
 
 function handlePreset(value: number) {
   applyPreset(value)
@@ -53,16 +86,20 @@ function getPrdConstant(): number {
           <div class="input-wrapper" :class="{ invalid: isInvalid }">
             <input
               type="number"
-              v-model.number="procChance"
+              :value="displayProc"
+              @focus="inputFocused = true"
+              @input="handleInput"
+              @blur="inputFocused = false; handleBlur($event)"
               min="1"
               max="99"
+              step="0.01"
               class="proc-input"
             />
             <span class="input-suffix">%</span>
           </div>
           <div class="c-value">
             <span class="c-label">C =</span>
-            <span class="c-number">{{ (getPrdConstant() * 100).toFixed(1) }}%</span>
+            <span class="c-number">{{ animatedC.toFixed(1) }}%</span>
           </div>
         </div>
 
@@ -188,7 +225,7 @@ function getPrdConstant(): number {
 }
 
 .proc-input {
-  width: 90px;
+  width: 110px;
   height: 48px;
   background: rgb(18 18 18);
   border: 1px solid #4f4f4f3b;
@@ -286,7 +323,7 @@ function getPrdConstant(): number {
   }
 
   .proc-input {
-    width: 80px;
+    width: 100px;
     height: 44px;
     font-size: 1.1rem;
   }
