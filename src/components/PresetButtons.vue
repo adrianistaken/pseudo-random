@@ -33,12 +33,12 @@ function selectPreset(preset: Preset) {
 
 <template>
   <div class="preset-sections">
-    <!-- Items -->
+    <!-- Spells -->
     <div class="preset-group">
-      <span class="group-label">Items</span>
+      <span class="group-label">Spells</span>
       <div class="preset-grid">
         <button
-          v-for="preset in items"
+          v-for="preset in spells"
           :key="preset.label"
           @click="selectPreset(preset)"
           class="preset-card"
@@ -68,12 +68,12 @@ function selectPreset(preset: Preset) {
       </div>
     </div>
 
-    <!-- Spells -->
+    <!-- Items -->
     <div class="preset-group">
-      <span class="group-label">Spells</span>
+      <span class="group-label">Items</span>
       <div class="preset-grid">
         <button
-          v-for="preset in spells"
+          v-for="preset in items"
           :key="preset.label"
           @click="selectPreset(preset)"
           class="preset-card"
@@ -182,8 +182,8 @@ function selectPreset(preset: Preset) {
 .preset-icon {
   position: relative;
   z-index: 1;
-  width: 32px;
-  height: 32px;
+  width: 40px;
+  height: 40px;
   border-radius: 3px;
   object-fit: cover;
   flex-shrink: 0;
@@ -202,6 +202,7 @@ function selectPreset(preset: Preset) {
   flex-direction: column;
   gap: 0.15rem;
   min-width: 0;
+  flex: 1;
 }
 
 .preset-label {
@@ -240,12 +241,13 @@ function selectPreset(preset: Preset) {
 .level-pips {
   display: flex;
   align-items: center;
-  gap: 2px;
+  gap: 3px;
+  flex: 1;
 }
 
 .level-pip {
-  width: 12px;
-  height: 7px;
+  flex: 1;
+  height: 8px;
   background: #2a2a2a;
   border: 1px solid #444;
   border-radius: 1px;
@@ -284,8 +286,8 @@ function selectPreset(preset: Preset) {
   }
 
   .preset-icon {
-    width: 28px;
-    height: 28px;
+    width: 34px;
+    height: 34px;
   }
 
   .preset-label {

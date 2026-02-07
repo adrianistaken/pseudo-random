@@ -23,6 +23,13 @@ export const PRESETS: Preset[] = [
   { label: 'Headshot',           levels: [28, 32, 36, 40],  description: 'Sniper',            image: '/images/spells/Sniper_Headshot_abilityicon_dota2_gameasset.png',                    category: 'spell' },
   { label: 'Juxtapose',          levels: [28, 32, 36, 40],  description: 'Phantom Lancer',    image: '/images/spells/Phantom_Lancer_Juxtapose_abilityicon_dota2_gameasset.png',           category: 'spell' },
   { label: 'Smoke Screen',       levels: [21, 24, 27, 30],  description: 'Riki',              image: '/images/spells/Riki_Smoke_Screen_abilityicon_dota2_gameasset.png',                  category: 'spell' },
+  { label: 'Chaos Strike',       levels: [30, 30, 30, 30],  description: 'Chaos Knight',      image: '/images/spells/Chaos_Knight_Chaos_Strike_abilityicon_dota2_gameasset.png',          category: 'spell' },
+  { label: 'Backtrack',          levels: [15, 20, 25, 30],  description: 'Faceless Void',     image: '/images/spells/Faceless_Void_Backtrack_abilityicon_dota2_gameasset.png',            category: 'spell' },
+  { label: 'Blade Dance',        levels: [20, 25, 30, 35],  description: 'Juggernaut',        image: '/images/spells/Juggernaut_Blade_Dance_abilityicon_dota2_gameasset.png',             category: 'spell' },
+  { label: 'Lucky Shot',         levels: [17, 18, 19, 20],  description: 'Pangolier',         image: '/images/spells/Pangolier_Lucky_Shot_abilityicon_dota2_gameasset.png',               category: 'spell' },
+  { label: 'Whirling Axes (M)',  levels: [10, 10, 10, 10],  description: 'Troll Warlord',     image: '/images/spells/Troll_Warlord_Whirling_Axes_(Melee)_abilityicon_dota2_gameasset.png',  category: 'spell' },
+  { label: 'Whirling Axes (R)',  levels: [10, 10, 10, 10],  description: 'Troll Warlord',     image: '/images/spells/Troll_Warlord_Whirling_Axes_(Ranged)_abilityicon_dota2_gameasset.png', category: 'spell' },
+  { label: 'Walrus PUNCH!',      levels: [15, 15, 15, 15],  description: 'Tusk',              image: '/images/spells/Tusk_Walrus_PUNCH!_abilityicon_dota2_gameasset.png',                 category: 'spell' },
 ]
 
 export const TRIAL_OPTIONS = [1_000, 10_000, 100_000] as const

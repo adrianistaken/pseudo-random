@@ -28,11 +28,7 @@ export const ANIMATION_CONFIG = {
 export function generateLabels(displayBuckets: number, maxBucket: number): string[] {
   const labels: string[] = []
   for (let i = 1; i <= displayBuckets; i++) {
-    if (i === displayBuckets && i === maxBucket) {
-      labels.push(`${i}+`)
-    } else {
-      labels.push(String(i))
-    }
+    labels.push(String(i))
   }
   return labels
 }
