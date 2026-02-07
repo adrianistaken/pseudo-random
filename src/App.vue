@@ -11,6 +11,7 @@ const { procChance, result, applyPreset } = useSimulation()
 
 const isInvalid = computed(() => procChance.value < 1 || procChance.value > 99)
 const inputFocused = ref(false)
+const currentView = ref<'main' | 'learn'>('main')
 
 const animatedProc = useAnimatedNumber(procChance, 350)
 const cPercent = computed(() => getPrdConstant() * 100)
@@ -56,13 +57,16 @@ function getPrdConstant(): number {
 
 <template>
   <div class="app-container">
-    <div class="content-wrapper">
+    <!-- Main View -->
+    <div v-if="currentView === 'main'" class="content-wrapper">
       <!-- Header -->
       <header class="header">
         <div class="title-group">
           <h1 class="main-title">Pseudo-Random Distribution</h1>
           <p class="subtitle">
             How proc chance increases with each failed attempt
+            <span class="subtitle-sep"> - </span>
+            <a class="learn-link" @click="currentView = 'learn'">Learn How It Works <span class="learn-arrow">&rarr;</span></a>
           </p>
         </div>
       </header>
@@ -107,6 +111,127 @@ function getPrdConstant(): number {
         <!-- Presets -->
         <div class="presets-group">
           <PresetButtons @select="handlePreset" />
+        </div>
+      </section>
+    </div>
+
+    <!-- Learn View -->
+    <div v-else class="content-wrapper">
+      <header class="header">
+        <div class="title-group">
+          <h1 class="main-title">How It Works</h1>
+          <p class="subtitle">
+            Understanding Pseudo-Random Distribution in Dota 2
+            <span class="subtitle-sep"> - </span>
+            <a class="learn-link" @click="currentView = 'main'"><span class="learn-arrow back-arrow">&larr;</span> Back to Calculator</a>
+          </p>
+        </div>
+      </header>
+
+      <section class="learn-content">
+        <!-- What is PRD -->
+        <div class="learn-section">
+          <h2 class="learn-heading">What is Pseudo-Random Distribution?</h2>
+          <p class="learn-text">
+            In Dota 2, many abilities and items have a chance to trigger a special effect on each attack — a "proc." You'd think a 25% chance means pure randomness, like flipping a weighted coin every time. But pure randomness feels terrible in practice. You can get unlucky and miss 10 times in a row, or get absurdly lucky and proc 3 times back to back.
+          </p>
+          <p class="learn-text">
+            Pseudo-Random Distribution (PRD) fixes this. Instead of rolling the same odds every time, PRD starts with a <em>lower</em> chance on your first attempt and <em>increases</em> it with each consecutive failure. If you keep not proccing, your chance keeps climbing until it eventually becomes a guarantee. The moment you proc, it resets back to the low starting value.
+          </p>
+          <p class="learn-text">
+            The result? The <strong>average</strong> proc rate stays the same as advertised (25% still means roughly 1 in 4 attacks), but the outcomes feel much fairer. You won't go on massive dry streaks, and you won't get absurd lucky chains either. It smooths out the randomness.
+          </p>
+        </div>
+
+        <!-- How it works -->
+        <div class="learn-section">
+          <h2 class="learn-heading">How It Works (The Simple Version)</h2>
+          <p class="learn-text">
+            Think of it like a staircase. Each time you attack and don't proc, you step up to a higher chance. When you finally proc, you jump back down to the bottom.
+          </p>
+          <div class="learn-example">
+            <p class="learn-example-title">Example: Skull Basher (25% bash chance)</p>
+            <div class="learn-steps">
+              <p>Attack 1 — your chance is only <strong>8.5%</strong></p>
+              <p>Attack 2 — climbs to <strong>17.0%</strong></p>
+              <p>Attack 3 — now <strong>25.5%</strong></p>
+              <p>Attack 4 — <strong>34.0%</strong></p>
+              <p>Attack 5 — <strong>42.5%</strong></p>
+              <p class="learn-steps-note">...and so on, going up by 8.5% each time, until you proc and it resets.</p>
+            </div>
+          </div>
+          <p class="learn-text">
+            That <strong>8.5%</strong> step size is called the <strong>C value</strong> — it's the constant that PRD is built around. It's not the same as the listed proc chance. Instead, it's a carefully calculated number that makes the average proc rate come out to exactly 25% over time.
+          </p>
+        </div>
+
+        <!-- The math -->
+        <div class="learn-section">
+          <h2 class="learn-heading">The Actual Math</h2>
+          <p class="learn-text">
+            On attempt <strong>N</strong> (counting from the last proc or the start of the game), your probability of proccing is:
+          </p>
+          <div class="learn-formula">
+            P(N) = C &times; N
+          </div>
+          <p class="learn-text">
+            That's it. Your proc chance on attempt N is just the C value multiplied by the attempt number (capped at 100%). So if C is 8.5%:
+          </p>
+          <div class="learn-formula-table">
+            <div class="formula-row">
+              <span class="formula-cell">Attempt 1:</span>
+              <span class="formula-cell-val">8.5% &times; 1 = 8.50%</span>
+            </div>
+            <div class="formula-row">
+              <span class="formula-cell">Attempt 2:</span>
+              <span class="formula-cell-val">8.5% &times; 2 = 17.00%</span>
+            </div>
+            <div class="formula-row">
+              <span class="formula-cell">Attempt 3:</span>
+              <span class="formula-cell-val">8.5% &times; 3 = 25.50%</span>
+            </div>
+            <div class="formula-row">
+              <span class="formula-cell">Attempt 12:</span>
+              <span class="formula-cell-val">8.5% &times; 12 = 100% (guaranteed)</span>
+            </div>
+          </div>
+          <p class="learn-text">
+            The tricky part is figuring out what C should be. You can't just use the listed proc chance — if Skull Basher started at 25% and went up by 25% each time, you'd proc way more than 25% on average. The C value has to be <em>lower</em> than the listed chance so that when you average it all out — the early low-chance attempts and the later high-chance attempts — the overall rate lands on 25%.
+          </p>
+          <p class="learn-text">
+            Finding C involves solving for the value where the expected number of attempts between procs equals <strong>1 / P</strong> (for 25%, that's 1 / 0.25 = 4 attempts on average). This is done using binary search — the same method this calculator uses. There's no clean closed-form formula, so even the game itself computes C through iteration.
+          </p>
+        </div>
+
+        <!-- Learn more -->
+        <div class="learn-section learn-section-cta">
+          <h2 class="learn-heading">Learn More</h2>
+          <p class="learn-text">
+            I made a video that walks through all of this visually, with examples from real Dota 2 gameplay. If you want a deeper breakdown, check it out:
+          </p>
+          <div class="learn-links">
+            <a href="https://youtube.com" target="_blank" rel="noopener" class="learn-link-card">
+              <span class="link-card-icon">&#9654;</span>
+              <span class="link-card-text">
+                <strong>Watch the Video</strong>
+                <span>Full breakdown of PRD in Dota 2</span>
+              </span>
+            </a>
+            <a href="https://youtube.com" target="_blank" rel="noopener" class="learn-link-card">
+              <span class="link-card-icon">&#9655;</span>
+              <span class="link-card-text">
+                <strong>YouTube Channel</strong>
+                <span>More Dota 2 content and analysis</span>
+              </span>
+            </a>
+            <a href="https://discord.gg" target="_blank" rel="noopener" class="learn-link-card">
+              <span class="link-card-icon">&#9830;</span>
+              <span class="link-card-text">
+                <strong>Join the Discord</strong>
+                <span>Discuss Dota 2 mechanics and more</span>
+              </span>
+            </a>
+          </div>
         </div>
       </section>
     </div>
@@ -164,6 +289,229 @@ function getPrdConstant(): number {
   color: #94a3b8;
   font-weight: 500;
   letter-spacing: 0.02em;
+}
+
+.subtitle-sep {
+  color: #4f4f4f;
+}
+
+.learn-link {
+  color: #7fb069;
+  cursor: pointer;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.learn-link:hover {
+  color: #a8d98a;
+}
+
+.learn-arrow {
+  display: inline-block;
+  transition: transform 0.2s ease;
+}
+
+.learn-link:hover .learn-arrow {
+  transform: translateX(3px);
+}
+
+.back-arrow {
+  transition: transform 0.2s ease;
+}
+
+.learn-link:hover .back-arrow {
+  transform: translateX(-3px);
+}
+
+.learn-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+}
+
+.learn-section {
+  background: rgb(18 18 18);
+  border: 1px solid #4f4f4f3b;
+  border-radius: 10px;
+  padding: 2rem 2.25rem;
+  animation: fadeIn 0.6s ease-out both;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.learn-section:nth-child(1) { animation-delay: 0.1s; }
+.learn-section:nth-child(2) { animation-delay: 0.2s; }
+.learn-section:nth-child(3) { animation-delay: 0.3s; }
+.learn-section:nth-child(4) { animation-delay: 0.4s; }
+
+.learn-section:hover {
+  border-color: rgba(127, 176, 105, 0.2);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(127, 176, 105, 0.1);
+}
+
+.learn-heading {
+  font-size: 1.35rem;
+  font-weight: 600;
+  color: #f1f5f9;
+  margin: 0 0 1rem 0;
+}
+
+.learn-text {
+  font-size: 0.95rem;
+  color: #94a3b8;
+  line-height: 1.75;
+  margin: 0 0 0.75rem 0;
+}
+
+.learn-text:last-child {
+  margin-bottom: 0;
+}
+
+.learn-text em {
+  color: #cbd5e1;
+  font-style: italic;
+}
+
+.learn-text strong {
+  color: #7fb069;
+  font-weight: 600;
+}
+
+.learn-example {
+  background: rgba(127, 176, 105, 0.05);
+  border: 1px solid rgba(127, 176, 105, 0.15);
+  border-radius: 8px;
+  padding: 1.25rem 1.5rem;
+  margin: 1rem 0;
+}
+
+.learn-example-title {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #7fb069;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin: 0 0 0.75rem 0;
+}
+
+.learn-steps p {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.85rem;
+  color: #cbd5e1;
+  margin: 0.3rem 0;
+  line-height: 1.6;
+}
+
+.learn-steps strong {
+  color: #7fb069;
+}
+
+.learn-steps-note {
+  color: #64748b !important;
+  font-style: italic;
+  margin-top: 0.5rem !important;
+}
+
+.learn-formula {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #7fb069;
+  text-align: center;
+  padding: 1.25rem;
+  margin: 1rem 0;
+  background: rgba(127, 176, 105, 0.06);
+  border: 1px solid rgba(127, 176, 105, 0.15);
+  border-radius: 8px;
+  letter-spacing: 0.03em;
+}
+
+.learn-formula-table {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin: 1rem 0;
+  padding: 1rem 1.25rem;
+  background: rgba(127, 176, 105, 0.04);
+  border: 1px solid rgba(127, 176, 105, 0.1);
+  border-radius: 8px;
+}
+
+.formula-row {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.85rem;
+  line-height: 1.8;
+}
+
+.formula-cell {
+  color: #64748b;
+  min-width: 90px;
+}
+
+.formula-cell-val {
+  color: #cbd5e1;
+}
+
+.learn-links {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.learn-link-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  background: rgba(127, 176, 105, 0.04);
+  border: 1px solid rgba(127, 176, 105, 0.12);
+  border-radius: 8px;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.learn-link-card:hover {
+  background: rgba(127, 176, 105, 0.08);
+  border-color: rgba(127, 176, 105, 0.3);
+}
+
+.link-card-icon {
+  font-size: 1.25rem;
+  color: #7fb069;
+  flex-shrink: 0;
+  width: 32px;
+  text-align: center;
+}
+
+.link-card-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.link-card-text strong {
+  color: #f1f5f9;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.link-card-text span {
+  color: #64748b;
+  font-size: 0.8rem;
+}
+
+@media (max-width: 768px) {
+  .learn-section {
+    padding: 1.5rem 1.25rem;
+  }
+
+  .learn-formula {
+    font-size: 1.1rem;
+  }
 }
 
 /* Invalid input indicator */
