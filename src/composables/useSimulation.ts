@@ -16,21 +16,21 @@ export const PRESETS: Preset[] = [
   { label: 'Butterfly',     levels: [35],  description: 'Evasion',          image: '/images/items/Butterfly_Flutter_abilityicon_dota2_wikiasset.png',          category: 'item' },
 
   // ── Spells ──
-  { label: 'Coup de Grace',      levels: [17],              description: 'Phantom Assassin',  image: '/images/spells/Phantom_Assassin_Coup_de_Grace_abilityicon_dota2_gameasset.png',     category: 'spell', talent: { bonus: 10, icon: '/images/icons/42px-Dota2_t3l_icon_darkmode.png' } },
+  { label: 'Coup de Grace',      levels: [17],              description: 'Phantom Assassin',  image: '/images/spells/Phantom_Assassin_Coup_de_Grace_abilityicon_dota2_gameasset.png',     category: 'spell', talent: { bonus: 10, icon: '/images/icons/42px-Dota2_t4r_icon_darkmode.png' } },
   { label: 'Greater Bash',       levels: [17],              description: 'Spirit Breaker',    image: '/images/spells/Spirit_Breaker_Greater_Bash_abilityicon_dota2_gameasset.png',         category: 'spell' },
   { label: 'Time Lock',          levels: [12, 16, 20, 24],  description: 'Faceless Void',     image: '/images/spells/Faceless_Void_Time_Lock_abilityicon_dota2_gameasset.png',             category: 'spell' },
   { label: 'Moment of Courage',  levels: [25],              description: 'Legion Commander',  image: '/images/spells/Legion_Commander_Moment_of_Courage_abilityicon_dota2_gameasset.png',  category: 'spell', talent: { bonus: 8, icon: '/images/icons/42px-Dota2_t3l_icon_darkmode.png' } },
   { label: 'Headshot',           levels: [40],              description: 'Sniper',            image: '/images/spells/Sniper_Headshot_abilityicon_dota2_gameasset.png',                     category: 'spell' },
   { label: 'Juxtapose',          levels: [40, 45, 50],      description: 'Phantom Lancer',    image: '/images/spells/Phantom_Lancer_Juxtapose_abilityicon_dota2_gameasset.png',            category: 'spell' },
   { label: 'Smoke Screen',       levels: [30, 45, 60, 75],  description: 'Riki',              image: '/images/spells/Riki_Smoke_Screen_abilityicon_dota2_gameasset.png',                   category: 'spell' },
-  { label: 'Chaos Strike',       levels: [33.33],           description: 'Chaos Knight',      image: '/images/spells/Chaos_Knight_Chaos_Strike_abilityicon_dota2_gameasset.png',           category: 'spell', talent: { bonus: 10, icon: '/images/icons/42px-Dota2_t3l_icon_darkmode.png' } },
-  { label: 'Backtrack',          levels: [20],              description: 'Faceless Void',     image: '/images/spells/Faceless_Void_Backtrack_abilityicon_dota2_gameasset.png',             category: 'spell', talent: { bonus: 0, icon: '/images/icons/42px-Dota2_t3l_icon_darkmode.png', locked: true } },
+  { label: 'Chaos Strike',       levels: [33.33],           description: 'Chaos Knight',      image: '/images/spells/Chaos_Knight_Chaos_Strike_abilityicon_dota2_gameasset.png',           category: 'spell', talent: { bonus: 10, icon: '/images/icons/42px-Dota2_t4r_icon_darkmode.png' } },
+  { label: 'Backtrack',          levels: [20],              description: 'Faceless Void',     image: '/images/spells/Faceless_Void_Backtrack_abilityicon_dota2_gameasset.png',             category: 'spell', talent: { bonus: 0, icon: '/images/icons/42px-Dota2_t4r_icon_darkmode.png', locked: true } },
   { label: 'Blade Dance',        levels: [35],              description: 'Juggernaut',        image: '/images/spells/Juggernaut_Blade_Dance_abilityicon_dota2_gameasset.png',              category: 'spell' },
   { label: 'Lucky Shot',         levels: [17],              description: 'Pangolier',         image: '/images/spells/Pangolier_Lucky_Shot_abilityicon_dota2_gameasset.png',                category: 'spell' },
   { label: 'Whirling Axes (M)',  levels: [20],              description: 'Troll Warlord',     image: '/images/spells/Troll_Warlord_Whirling_Axes_(Melee)_abilityicon_dota2_gameasset.png',  category: 'spell' },
   { label: 'Whirling Axes (R)',  levels: [20],              description: 'Troll Warlord',     image: '/images/spells/Troll_Warlord_Whirling_Axes_(Ranged)_abilityicon_dota2_gameasset.png', category: 'spell' },
   { label: 'Walrus PUNCH!',      levels: [12],              description: 'Tusk',              image: '/images/spells/Tusk_Walrus_PUNCH!_abilityicon_dota2_gameasset.png',                  category: 'spell', talent: { bonus: 0, icon: '/images/icons/42px-Dota2_t4r_icon_darkmode.png', locked: true } },
-  { label: 'Fireblast',          levels: [17],              description: 'Ogre Magi',         image: '/images/spells/Ogre_Magi_Fireblast_abilityicon_dota2_gameasset.png',                 category: 'spell', talent: { bonus: 0, icon: '/images/icons/42px-Dota2_t3l_icon_darkmode.png', locked: true } },
+  { label: 'Fireblast',          levels: [17],              description: 'Ogre Magi',         image: '/images/spells/Ogre_Magi_Fireblast_abilityicon_dota2_gameasset.png',                 category: 'spell', talent: { bonus: 0, icon: '/images/icons/42px-Dota2_t4r_icon_darkmode.png', locked: true } },
 ]
 
 export const TRIAL_OPTIONS = [1_000, 10_000, 100_000] as const
