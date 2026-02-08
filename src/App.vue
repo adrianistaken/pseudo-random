@@ -202,21 +202,25 @@ function getPrdConstant(): number {
             That's it. Your proc chance on attempt N is just the C value multiplied by the attempt number (capped at 100%). So if C is 8.5%:
           </p>
           <div class="learn-formula-table">
+            <div class="formula-row formula-header">
+              <span class="formula-cell">Formula:</span>
+              <span class="formula-cell-val">P(N) = C &times; N</span>
+            </div>
             <div class="formula-row">
               <span class="formula-cell">Attempt 1:</span>
-              <span class="formula-cell-val">8.5% &times; 1 = 8.50%</span>
+              <span class="formula-cell-val">8.50% = 8.5% &times; 1</span>
             </div>
             <div class="formula-row">
               <span class="formula-cell">Attempt 2:</span>
-              <span class="formula-cell-val">8.5% &times; 2 = 17.00%</span>
+              <span class="formula-cell-val">17.00% = 8.5% &times; 2</span>
             </div>
             <div class="formula-row">
               <span class="formula-cell">Attempt 3:</span>
-              <span class="formula-cell-val">8.5% &times; 3 = 25.50%</span>
+              <span class="formula-cell-val">25.50% = 8.5% &times; 3</span>
             </div>
             <div class="formula-row">
               <span class="formula-cell">Attempt 12:</span>
-              <span class="formula-cell-val">8.5% &times; 12 = 100% (guaranteed)</span>
+              <span class="formula-cell-val">100% = 8.5% &times; 12 (guaranteed)</span>
             </div>
           </div>
           <p class="learn-text">
@@ -539,6 +543,18 @@ function getPrdConstant(): number {
 
 .formula-cell-val {
   color: #cbd5e1;
+}
+
+.formula-header {
+  color: #7fb069;
+  margin-bottom: 0.35rem;
+  padding-bottom: 0.45rem;
+  border-bottom: 1px solid rgba(127, 176, 105, 0.15);
+}
+
+.formula-header .formula-cell,
+.formula-header .formula-cell-val {
+  color: #7fb069;
 }
 
 .learn-links {
