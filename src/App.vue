@@ -227,7 +227,7 @@ function getPrdConstant(): number {
             The tricky part is figuring out what C should be. You can't just use the listed proc chance — if Skull Basher started at 25% and went up by 25% each time, you'd proc way more than 25% on average. The C value has to be <em>lower</em> than the listed chance so that when you average it all out — the early low-chance attempts and the later high-chance attempts — the overall rate lands on 25%.
           </p>
           <p class="learn-text">
-            Finding C involves solving for the value where the expected number of attempts between procs equals <strong>1 / P</strong> (for 25%, that's 1 / 0.25 = 4 attempts on average). This is done using binary search — the same method this calculator uses. There's no clean closed-form formula, so even the game itself computes C through iteration.
+            Finding C means answering: "what step size makes you proc once every <strong>1 / P</strong> attacks on average?" — where <strong>P</strong> is the listed proc chance. For 25%, that's once every 4 attacks (1 / 0.25 = 4). There's no simple formula to get C directly — it's found through trial and error (binary search), which is exactly how this calculator computes it.
           </p>
         </div>
 
