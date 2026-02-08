@@ -180,7 +180,7 @@ function getPrdConstant(): number {
             </div>
           </div>
           <p class="learn-text">
-            That <strong>8.5%</strong> step size is called the <strong>C value</strong> — it's the constant that PRD is built around. It's not the same as the listed proc chance. Instead, it's a carefully calculated number that makes the average proc rate come out to exactly 25% over time.
+            That <strong>8.5%</strong> step size is called the <strong>C value</strong> — it's the constant that PRD is built around. It's not the same as the listed proc chance, and not the same for every ability. Instead, it's a carefully calculated number that makes the average proc rate come out to exactly 25% over time.
           </p>
         </div>
 
@@ -378,9 +378,10 @@ function getPrdConstant(): number {
   padding: 0;
   line-height: 1.1;
   background:
-    linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.4) 50%, transparent 100%),
-    linear-gradient(135deg, #f8fafc 0%, #7fb069 50%, #a8d98a 100%);
-  background-size: 200% 100%, 100% 100%;
+    linear-gradient(105deg, transparent 0%, rgba(255, 255, 255, 0.55) 50%, transparent 100%),
+    linear-gradient(135deg, #7fb069 0%, #a8d98a 50%, #7fb069 100%);
+  background-size: 65% 100%, 100% 100%;
+  background-repeat: no-repeat, no-repeat;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
