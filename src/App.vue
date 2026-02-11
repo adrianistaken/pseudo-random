@@ -51,6 +51,7 @@ function handlePreset(value: number) {
 function getPrdConstant(): number {
   if (!result.value) return 0
   const p = procChance.value / 100
+  if (p <= 0 || p >= 1) return 0
   return calculateC(p)
 }
 </script>
